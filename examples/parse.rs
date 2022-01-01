@@ -2,12 +2,8 @@ use quote::format_ident;
 use syn::{parse_quote, Type, TypePath};
 
 fn main() {
-    // let item_impl: ItemImpl = parse_quote!(
-    //     impl<T> A for B<T> {
-    //         fn new() -> Self {}
-    //     }
-    // );
-    // dbg!(item_impl);
+    let ty: syn::Type = parse_quote!(Box<dyn Fn(T, T2) -> (R, R2)>);
+    dbg!(ty);
 
     let ident = format_ident!("Self");
     let ty_from_macro: Type = parse_quote!( #ident );
