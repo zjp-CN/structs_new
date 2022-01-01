@@ -83,12 +83,6 @@ impl Parse for NewItemStruct {
     }
 }
 
-impl NewItemStruct {
-    pub fn parse_multi(input: ParseStream) -> Result<Punctuated<Self, Token![;]>> {
-        Punctuated::parse_terminated(input)
-    }
-}
-
 impl NewLocal {
     fn split(self) -> ((Option<FnArg>, FieldValue), Pair<Field, Comma>) {
         let (ident, ty, expr) = (self.ident, self.ty, self.init.map(|(_, e)| *e));
@@ -138,5 +132,10 @@ impl NewItemStruct {
             }
         };
         (item_struct, item_impl)
+    }
+
+    /// 解析以 `;` 分隔的多项
+    pub fn parse_multi(input: ParseStream) -> Result<Punctuated<Self, Token![;]>> {
+        Punctuated::parse_terminated(input)
     }
 }
