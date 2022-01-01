@@ -25,3 +25,13 @@ pub fn struct_new2(input: TokenStream) -> TokenStream {
     let (item_struct, item_impl) = new_struct.split();
     TokenStream::from(quote! {#item_struct #item_impl})
 }
+
+#[proc_macro]
+pub fn structs_new2(input: TokenStream) -> TokenStream {
+    use structs2::NewItemStruct;
+    let new_structs = parse_macro_input!(input with NewItemStruct::parse_multi);
+    let expand = new_structs.into_iter()
+                            .map(NewItemStruct::split)
+                            .map(|(item_struct, item_impl)| quote! {#item_struct #item_impl});
+    TokenStream::from(quote! { #(#expand)* })
+}

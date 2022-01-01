@@ -50,17 +50,18 @@ impl Parse for NewFields {
 
 impl Parse for NewLocal {
     fn parse(input: ParseStream) -> Result<Self> {
+        fn parse_init(input: &ParseStream) -> Option<(Eq, Box<Expr>)> {
+            match (input.parse(), input.parse()) {
+                (Ok(eq), Ok(expr)) => Some((eq, Box::new(expr))),
+                _ => None,
+            }
+        }
         Ok(Self { attrs:       input.call(Attribute::parse_outer)?,
                   vis:         input.parse()?,
                   ident:       input.parse()?,
                   colon_token: input.parse()?,
                   ty:          input.parse()?,
-                  init:        {
-                      match (input.parse(), input.parse()) {
-                          (Ok(eq), Ok(expr)) => Some((eq, Box::new(expr))),
-                          _ => None,
-                      }
-                  }, })
+                  init:        parse_init(&input), })
     }
 }
 
@@ -79,6 +80,12 @@ impl Parse for NewItemStruct {
                   ident:        input.parse()?,
                   generics:     parse_generics(&input)?,
                   fields:       input.parse()?, })
+    }
+}
+
+impl NewItemStruct {
+    pub fn parse_multi(input: ParseStream) -> Result<Punctuated<Self, Token![;]>> {
+        Punctuated::parse_terminated(input)
     }
 }
 
@@ -125,7 +132,7 @@ impl NewItemStruct {
                 #return_type { #(#field_values),* }
             }
         };
-        let item_impl: ItemImpl = parse_quote! {
+        let item_impl = parse_quote! {
             impl #impl_generics #struct_ident #ty_generics #where_clause {
                 #impl_item
             }

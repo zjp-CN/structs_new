@@ -20,3 +20,7 @@ path = "./tests/ui/struct_new1.rs"
 [[bin]]
 name = "struct_new2"
 path = "./tests/ui/struct_new2.rs"
+
+[[bin]]
+name = "struct_new2-multi"
+path = "./tests/ui/struct_new2-multi.rs"
