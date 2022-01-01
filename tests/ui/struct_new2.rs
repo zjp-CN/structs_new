@@ -1,6 +1,7 @@
 #![allow(unused)]
+use proc::struct_new2 as struct_new;
 fn main() {
-    proc::struct_new! {
+    struct_new! {
         #[derive(Debug)]
         struct A {
             foo: u8,
@@ -11,7 +12,7 @@ fn main() {
 
     dbg!(A::new(0, "".into()));
 
-    proc::struct_new! {
+    struct_new! {
         #[derive(Debug)]
         struct B<T> {
             foo: u8,
@@ -22,7 +23,7 @@ fn main() {
 
     dbg!(B::new(1, 2));
 
-    proc::struct_new! {
+    struct_new! {
         #[derive(Debug)]
         struct C<'a> {
             foo: &'a str,
@@ -32,7 +33,7 @@ fn main() {
 
     dbg!(C::new(""));
 
-    proc::struct_new! {
+    struct_new! {
         #[derive(Debug)]
         struct D<'a, T> {
             foo: &'a str,
@@ -43,7 +44,7 @@ fn main() {
 
     dbg!(D::new("", 1));
 
-    proc::struct_new! {
+    struct_new! {
         #[derive(Debug)]
         struct E<T> where T: Copy {
             foo: u8,
@@ -54,7 +55,7 @@ fn main() {
 
     dbg!(E::new(1, 2));
 
-    proc::struct_new! {
+    struct_new! {
         #[derive(Debug)]
         struct F<I: Iterator> where I::Item: Copy {
             pub bar: I,
@@ -64,7 +65,7 @@ fn main() {
 
     dbg!(F::new(vec![1].into_iter()));
 
-    proc::struct_new! {
+    struct_new! {
         #[derive(Debug)]
         struct G<'a, 'b, 'c: 'a+'b> {
             foo: &'c str,

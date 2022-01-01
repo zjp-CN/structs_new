@@ -16,3 +16,7 @@ trybuild = "1"
 [[bin]]
 name = "struct_new1"
 path = "./tests/ui/struct_new1.rs"
+
+[[bin]]
+name = "struct_new2"
+path = "./tests/ui/struct_new2.rs"
