@@ -3,7 +3,10 @@
 使用函数式过程宏，给结构体生成 `new` 构造函数。完整例子见 
 [`struct_new2-multi`](https://github.com/zjp-CN/structs_new/blob/main/tests/ui/struct_new2-multi.rs)。
 
-你可以通过 `cargo run --bin struct_new2-multi` 命令运行。
+你可以通过 `cargo run --bin struct_new2-multi` 命令运行，或者使用
+`cargo expand --bin struct_new2-multi` 查看过程宏展开的内容[^cargo-expand]。
+
+[^cargo-expand]: 你需要安装 [cargo-expand](https://github.com/dtolnay/cargo-expand)。
 
 注意：这是我学习编写 Rust 过程宏的小案例 ——
 我可能会围绕它写一点教程（目前暂且先把零碎的东西记录在此 README 中）。
@@ -46,8 +49,8 @@
 2. `new` 方法的参数接收不带默认值的字段的值
 3. 结构体及其字段需要保留其属性和可见性
 
-这个问题并不算复杂，除了这个现成的、不太完美的、使用声明宏的方案（它不完美在很难解析 
-`where` 语句），此外，存在一个功能齐全的 derive 过程宏方案 —— [derive-new](https://crates.io/crates/derive-new)。
+这个问题并不算复杂，除了这个现成的、不太完美的、使用声明宏的方案之外（它不完美在很难解析复杂的泛型），
+还存在一个功能齐全的 derive 过程宏方案：[derive-new](https://crates.io/crates/derive-new) crate。
 
 > 但这里的重点并不在于解决原问题，而在于面对同一个需求时，函数式过程宏与声明宏之间的区别。
 
@@ -166,7 +169,7 @@ let item_impl = parse_quote! {
 
 其实质是利用 `Punctuated<Self, Token![;]>` 类型进行解析输入。
 
-## 例子说明
+## 例子解读
 
 在声明宏的解决方案中，你可以实现
 [`struct_new2-multi`](https://github.com/zjp-CN/structs_new/blob/main/tests/ui/struct_new2-multi.rs)。
@@ -198,4 +201,35 @@ let item_impl = parse_quote! {
     }
 };
 ```
+
+强类型在此的另一大好处是，所有可利用（被设计）的语法标记是非常清楚的，你不会遗漏：
+```RUST
+pub struct NewItemStruct {
+    pub attrs:        Vec<Attribute>,
+    pub vis:          Visibility,
+    pub struct_token: Struct,
+    pub ident:        Ident,
+    pub generics:     Generics,
+    pub fields:       NewFields,
+}
+
+pub struct NewFields {
+    pub paren_token: Brace,
+    pub named:       Punctuated<NewLocal, Comma>,
+}
+
+pub struct NewLocal {
+    pub attrs:       Vec<Attribute>,
+    pub vis:         Visibility,
+    pub ident:       Ident,
+    pub colon_token: Colon,
+    pub ty:          Type,
+    pub init:        Option<(Eq, Box<Expr>)>,
+}
+```
+
+换句话说，强类型帮助你思考和设计语法标记的结构。
+
+你不会像使用声明宏那样无从下手，因为你很难马上确定以哪种分类符解析语法，或者即便可以解析语法，交还给编译器时，你无法保证编译器接受这种方式捕获的标记。（这正是原贴的问题所在）
+
 
