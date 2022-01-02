@@ -67,7 +67,7 @@ impl Parse for NewLocal {
 
 impl Parse for NewItemStruct {
     fn parse(input: ParseStream) -> Result<Self> {
-        fn parse_generics(input: &ParseStream) -> Result<Generics> {
+        fn parse_generics(input: ParseStream) -> Result<Generics> {
             let mut generics: Generics = input.parse()?;
             if input.peek(Token![where]) {
                 generics.where_clause = input.parse()?;
@@ -78,7 +78,7 @@ impl Parse for NewItemStruct {
                   vis:          input.parse()?,
                   struct_token: input.parse()?,
                   ident:        input.parse()?,
-                  generics:     parse_generics(&input)?,
+                  generics:     parse_generics(input)?,
                   fields:       input.parse()?, })
     }
 }

@@ -50,7 +50,7 @@ impl Parse for NewFields {
 
 impl Parse for NewLocal {
     fn parse(input: ParseStream) -> Result<Self> {
-        fn parse_init(input: &ParseStream) -> Option<(Eq, Box<Expr>)> {
+        fn parse_init(input: ParseStream) -> Option<(Eq, Box<Expr>)> {
             match (input.parse(), input.parse()) {
                 (Ok(eq), Ok(expr)) => Some((eq, Box::new(expr))),
                 _ => None,
@@ -61,7 +61,7 @@ impl Parse for NewLocal {
                   ident:       input.parse()?,
                   colon_token: input.parse()?,
                   ty:          input.parse()?,
-                  init:        parse_init(&input), })
+                  init:        parse_init(input), })
     }
 }
 
