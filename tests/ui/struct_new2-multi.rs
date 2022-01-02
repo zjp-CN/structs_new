@@ -42,13 +42,21 @@ fn main() {
             pub bar: &'a str,
             abc: &'b str = "",
         };
+        struct H<T, R, F> where F: FnOnce(T) -> R {
+            val: T,
+            fun: F,
+        };
     }
 
-    dbg!(A::new(0, "".into()));
-    dbg!(B::new(1, 2));
-    dbg!(C::new(""));
-    dbg!(D::new("", 1));
-    dbg!(E::new(1, 2));
-    dbg!(F::new(vec![1].into_iter()));
-    dbg!(G::new("", ""));
+    dbg!(A::new(0, "".into()),
+         B::new(1, 2),
+         C::new(""),
+         D::new("", 1),
+         E::new(1, 2),
+         F::new(vec![1].into_iter()),
+         G::new("", ""),);
+    {
+        let h = H::new(0, |a: u32| (a + 1) as u64);
+        dbg!((h.fun)(h.val));
+    }
 }
