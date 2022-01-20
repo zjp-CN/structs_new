@@ -17,7 +17,8 @@
 [此链接](https://www.yuque.com/zhoujiping/programming/rust-materials) 网页中搜索【过程宏】找到。
 
 如果你想编写过程宏，那么以下内容是必须掌握的：
-1. Rust 几乎所有的语法：因为 Rust 的宏就是在操作 AST，所以掌握源代码的语法结构是第一步。当你能自如地查阅 
+1. Rust 几乎所有的语法：因为 Rust 的宏就是在操作 AST
+    （或者说 CST？），所以掌握源代码的语法结构是第一步。当你能自如地查阅 
     [Reference](https://doc.rust-lang.org/nightly/reference) 一书，那么这一步就成功了。
 2. Rust 的声明宏：声明宏可以单独学习，它完全不涉及过程宏；但过程宏涉及声明宏，而且它们之间有许多相似的地方。
    你可以不需要掌握声明宏高阶模式部分，但你至少要掌握声明宏最通用的部分。
@@ -61,7 +62,7 @@
 ### structs.rs
 
 [structs.rs](https://github.com/zjp-CN/structs_new/blob/main/src/structs.rs)
-展示了利用 `syn` 中的类型来纯手写构建 AST 的过程。这个构建过程的意义：
+展示了利用 `syn` 中的类型来纯手写构建 CST 的过程。这个构建过程的意义：
 1. 让编写者清楚地知道每一处类型对应于源代码的哪种语法，从而领略到，声明宏的 
     [13 种片段分类符](https://zjp-cn.github.io/tlborm/macros/minutiae/fragment-specifiers.html)
     远远不足以完整描述和精确控制语法解析和生成。
@@ -122,13 +123,13 @@ fn ident_into_path_with_generics(ident: Ident, generics: Generics) -> Path {
 
 ### structs2.rs
 
-手动构建 AST 太繁琐了，但 `syn` 提供了方便的 
+手动构建 CST 太繁琐了，但 `syn` 提供了方便的 
 [`parse_quote!`](https://docs.rs/syn/latest/syn/macro.parse_quote.html)
 声明宏，利用插值解决不同语境的类型转化问题。
 
 在 [structs2.rs](https://github.com/zjp-CN/structs_new/blob/main/src/structs2.rs)
 的例子中，你只需要编写如下代码 —— 它看起来很像 Rust 源代码（也像声明宏的展开部分[^macro-rules-like]）
-—— 就能避免大多数手动构建 AST 类型[^avoid]。
+—— 就能避免大多数手动构建解析树所需的类型[^avoid]。
 
 ```rust
 let fnarg = if expr.is_none() { Some(parse_quote!( #ident : #ty )) } else { None };
@@ -161,7 +162,7 @@ let item_impl = parse_quote! {
 [^macro-rules-like]: 这不是偶然的，因为 `parse_quote!` 背后是 `quote::quote!` 
 声明宏的[功劳](https://docs.rs/quote/latest/src/quote/lib.rs.html)。
 
-[^avoid]: 当然，手动构建 AST 类型依然是基本功。
+[^avoid]: 当然，手动构建解析树的各种类型依然是基本功。
 
 ---
 
